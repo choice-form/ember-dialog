@@ -282,20 +282,20 @@ export default Ember.Service.extend(Ember.Evented, {
 
     presenter = presenter.reopen(ContextMixin);
     presenter = presenter.reopen({presenterId: presenterId, target: context});
-    options = Ember.merge(Ember.copy(this.get("defaults")), options);
+    options = Ember.assign({}, this.get("defaults"), options);
     if (Ember.typeOf(layout) === "object") {
-      options = Ember.merge(options, { layout: layout });
+      options = Ember.assign(options, { layout: layout });
     } else {
-      options = Ember.merge(options, { layout: getOwner(this).lookup(["template", layout].join(":")) });
+      options = Ember.assign(options, { layout: getOwner(this).lookup(["template", layout].join(":")) });
     }
 
     if (Ember.typeOf(template) === "object") {
       // The template will be included into the presenter's body as
       // dialog-body component
-      options = Ember.merge(options, { template: template });
+      options = Ember.assign(options, { template: template });
     } else {
       // The template will be included into the presenter's body as partial
-      options = Ember.merge(options, { templateName: template });
+      options = Ember.assign(options, { templateName: template });
     }
 
     presenter = presenter.reopen(options);
@@ -332,7 +332,7 @@ export default Ember.Service.extend(Ember.Evented, {
      * @event module:ember-dialog/services/dialog~created
      * @type {module:ember-dialog/components/presenter}
      */
-    Ember.run.scheduleOnce("sync", this, () => { this.trigger("created", presenter); });
+    Ember.run.next(this, () => { this.trigger("created", presenter); });
 
     return new Ember.RSVP.Promise((resolve, reject) => {
       presenter.reopen({ resolve, reject });
